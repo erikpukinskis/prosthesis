@@ -1,25 +1,17 @@
 {
-  "name": "narrative",
-  "version": "0.20.0",
-  "description": "Programming for more people",
-  "bin": "narrative.js",
+  "name": "timely",
+  "version": "0.0.0",
+  "description": "Keep Erik on track",
+  "main": "new.js",
   "dependencies": {
     "module-library": "*",
     "web-host": "*",
     "web-element": "*",
-    "basic-styles": "*"
-  },
-  "devDependencies": {
-    "run-test": "*",
-    "web-site": "*",
-    "browser-bridge": "*",
-    "identifiable": "*"
-  },
-  "scripts": {
-    "test": "node test.js"
+    "basic-styles": "*",
+    "appeared-a-wild": "*"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/erikpukinskis/narrative.git"
+    "url": "https://github.com/erikpukinskis/.git"
   }
 }
