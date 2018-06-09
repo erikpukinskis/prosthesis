@@ -8,7 +8,8 @@
     "web-host": "*",
     "web-element": "*",
     "basic-styles": "*",
-    "appeared-a-wild": "*"
+    "appeared-a-wild": "*",
+    "render-code": "*"
   },
   "repository": {
     "type": "git",

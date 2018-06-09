@@ -1,8 +1,30 @@
 var library = require("module-library")(require)
 
 library.using(
-  ["web-element", "web-site", "browser-bridge", "basic-styles", "appeared-a-wild", "./timer"],
-  function(element, WebSite, BrowserBridge, basicStyles, appearedAWild, xxx) {
+  ["web-element", "web-site", "browser-bridge", "basic-styles"],
+  function(element, WebSite, BrowserBridge, basicStyles) {
+
+    var submit = element.template(
+      "form",
+      function(text, path, values, color) {
+        for(var name in values) {
+          var value = values[name]
+          this.addChild(
+            hidden(name, value))
+        }
+        this.addAttribute("action", path)
+        this.addAttribute("method", "get")
+        var button = element(
+          "input",{
+          "type": "submit",
+          "value": text})
+        if (color) {
+          button.appendStyles({
+            "background": color})}
+        this.appendStyles({
+          "display": "inline"})
+        this.addChild(button)
+      })
 
     var baseBridge = new BrowserBridge()
     var site = new WebSite()
@@ -19,27 +41,6 @@ library.using(
     })
 
     baseBridge.addToHead(element.stylesheet(pageStyle))
-
-    site.addRoute(
-      "get",
-      "/",
-      baseBridge.requestHandler(
-        element(
-          "form",{
-          "method": "get",
-          "action": "/timely-matter"},[
-          element("p", "Do you have any matters which are time pressing?"),
-          element(
-            "input",{
-            "name": "matter",
-            "value": "My passport",
-            "type": "text"}),
-          element("p", element(
-            "input",{
-            "type": "submit",
-            "value": "This matter is timely"}))
-          ])
-      ))
 
     function highlightable(bridge) {
       var high = bridge.remember("highlightable")
@@ -68,27 +69,44 @@ library.using(
         this.addAttribute("value", value)
       })
 
-    var submit = element.template(
-      "form",
-      function(text, path, values) {
-        for(var name in values) {
-          var value = values[name]
-          this.addChild(
-            hidden(name, value))
-        }
-        this.addAttribute("action", path)
-        this.addAttribute("method", "get")
-        this.appendStyles({
-          "display": "inline"})
-        this.addChild(
-          element(
-            "input",{
-            "type": "submit",
-            "value": text}))
-      })
+    var button = submit("I need help", "/help", null, "#58d")
+    button.appendStyles({
+      "position": "fixed",
+      "bottom": "8px"})
 
     baseBridge.addToBody(
-      element("p", submit("I need help", "/help")))
+      element("p", button))
+
+    site.addRoute(
+      "get",
+      "/",
+      baseBridge.requestHandler([
+        element(
+          "form",{
+          "method": "get",
+          "action": "/timely-matter"},[
+          element("p", "Do you have any matters which are time pressing?"),
+          element(
+            "input",{
+            "name": "matter",
+            "value": "",
+            "type": "text"}),
+          element("p", element(
+            "input",{
+            "type": "submit",
+            "value": "This matter is timely"}))
+          ]),
+        submit(
+          "No",
+          "/nothing-pressing"),
+      ]))
+
+    site.addRoute(
+      "get",
+      "/nothing-pressing",
+      baseBridge.requestHandler([
+        element("p", "OK, what's going on!"),
+      ]))
 
     site.addRoute(
       "get",
@@ -101,7 +119,86 @@ library.using(
         submit("I'm ready to start", "/"),
       ]))
 
-    appearedAWild("web-site", site)
+    site.addRoute(
+      "get",
+      "/timer",
+      function(request, response) {
+        var matter = request.query.matter
+        var length = request.query.length
+
+        var bridge = baseBridge.forResponse(response)
+
+        function lengthInMilliseconds(timeText) {
+          var ms = 0
+
+          var parts = timeText.match(/([0-9]+) ?h/)
+          if (parts) {
+            ms += parseInt(parts[1]) * 60 * 60 * 1000
+          }
+
+          var parts = timeText.match(/([0-9]+) ?m/)
+          if (parts) {
+            ms += parseInt(parts[1]) * 60 * 1000
+          }
+
+          var parts = timeText.match(/([0-9]+) ?s/)
+          if (parts) {
+            ms += parseInt(parts[1]) * 1000
+          }
+
+          return ms
+        }
+
+        bridge.domReady(
+          [lengthInMilliseconds(length)],
+          function startTimer(length) {
+            var start = new Date()
+
+            var ms = document.getElementById("time")
+            setInterval(function() {
+              var now = new Date()
+              var elapsed = now - start
+              var remaining = length - elapsed
+              var seconds = remaining/1000
+              var minutes = Math.floor(seconds/60)
+              seconds = Math.floor(seconds - minutes*60)
+              var hours = Math.floor(minutes/60)
+              minutes = Math.floor(minutes - hours*60)
+              text = " "
+              if (hours) {
+                text += hours+" hours "
+              }
+              if (minutes) {
+                text += minutes+" minutes "
+              }
+              if (seconds) {
+                text += seconds+" seconds "
+              }
+              ms.innerText = text.trim()
+            }, 1000)
+          })
+
+        var body = []
+
+        body.push(
+          element(
+            ".lil-page",[
+            element("p", "<b id=\"time\">"+length+"</b> left to <b>"+matter+"</b>")
+          ]))
+
+        if (lengthInMilliseconds(length) > 5 * 60 * 1000) {
+          body.push(
+            element(
+              ".lil-page",[
+              element("p", "Is there a chance you could do it in 5 minutes?"),
+              submit("Yes", "/timer", {
+                "length": "5 minutes",
+                "matter": matter}),
+            ]))
+        }
+
+        bridge.send(body)
+      })
 
 
     // timers and todo items need to be permanent
