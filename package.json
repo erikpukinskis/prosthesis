@@ -2,7 +2,7 @@
   "name": "timely",
   "version": "0.0.0",
   "description": "Keep Erik on track",
-  "main": "new.js",
+  "main": "timely.js",
   "dependencies": {
     "module-library": "*",
     "web-host": "*",
