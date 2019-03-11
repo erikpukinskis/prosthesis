@@ -26,6 +26,8 @@ library.using([
     var site = new WebSite()
     site.start(process.env.PORT || 4141)
 
+    console.log("TZ is", process.env.TZ)
+    
     var bridge = new BrowserBridge()
     basicStyles.addTo(bridge)
 
