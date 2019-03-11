@@ -29,6 +29,13 @@ library.using([
     var bridge = new BrowserBridge()
     basicStyles.addTo(bridge)
 
+    var doIt = element(
+      ".lil-page",[
+      element("h1", "Are there things to do?"),
+      element("textarea"),
+      element("p", element("input",{"type": "submit", "value": "Yes"})),
+      ])
+
     var stylesheet = element.stylesheet([
       element.style(
         ".time-block",{
@@ -39,6 +46,7 @@ library.using([
 
       element.style(
         ".time-block__done",{
+        "font-size": "15px",
         "background": "orange"}),
 
       element.style(
@@ -101,9 +109,9 @@ library.using([
         var pre = element()
         var post = element()
 
-        for (var i=0; i<num; i++) {
+        for (var i=1; i<num; i++) {
           pre.addChild(
-            element(".time-block.time-block__done"))
+            element(".time-block.time-block__done", element.raw("#"+i)))
         }
 
         for (var i=num+1; i<64; i++) {
@@ -135,6 +143,7 @@ library.using([
           head,
           pre,
           spaceship,
+          doIt,
           post])})
 
     function progressBar(percent) {
