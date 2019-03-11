@@ -19,6 +19,10 @@ library.using([
   "web-site"],
   function(element, basicStyles, BrowserBridge, WebSite) {
 
+    var seconds = 1000
+    var minutes = seconds * 60
+
+
     var site = new WebSite()
     site.start(4141)
 
@@ -27,6 +31,8 @@ library.using([
 
     var now = timeSlice(new Date())
 
+    var woke = timeSlice(new Date("2019-03-11 12:45"))
+
     bridge.domReady(
       function() {
         setInterval(
@@ -34,9 +40,12 @@ library.using([
             console.log("tick")},
           1000)})
 
+    var num = number(now, woke)
+    var percent = Math.ceil(num/64*100)+"%"
     var page = element(".lil-page",[
       element("h1", "Hi!"),
       element("p", "We are in slice "+now),
+      element("p", element.raw("#"+num+"/64 ("+percent+")")),
       element("p", "There are "+timeLeft(now)+" minutes left")
       ])
 
@@ -73,5 +82,10 @@ library.using([
       var endMinute = Math.ceil(new Date().getMinutes() / 15)*15
 
       return endMinute - startMinute
+    }
+
+    function number(slice, since) {
+      var dt = new Date(slice) - new Date(since)
+      return dt / minutes / 15 + 1
     }
   })
