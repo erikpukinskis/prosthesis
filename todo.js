@@ -29,9 +29,26 @@ library.using([
     var bridge = new BrowserBridge()
     basicStyles.addTo(bridge)
 
-    var now = timeSlice(new Date())
+    var stylesheet = element.stylesheet([
+      element.style(
+        ".time-block",{
+        "display": "inline-block",
+        "margin": "0 8px 8px 0",
+        "width": "25px",
+        "height": "25px"}),
 
-    var woke = timeSlice(new Date("2019-03-11 12:45"))
+      element.style(
+        ".time-block__done",{
+        "background": "orange"}),
+
+      element.style(
+        ".time-block__upcoming", {
+        "background": "gray"}),
+
+      ])
+
+    bridge.addToHead(
+      stylesheet)
 
     bridge.domReady(
       function() {
@@ -40,21 +57,48 @@ library.using([
             console.log("tick")},
           1000)})
 
-    var num = number(now, woke)
-    var percent = Math.ceil(num/64*100)
-    var page = element(".lil-page",[
-      element("h1", "Hi!"),
-      element("p", "We are in slice "+now),
-      element("p", element.raw("#"+num+"/64 ("+percent+"%) "), progressBar(percent)),
-      element("p", "There are "+timeLeft(now)+" minutes left")
-      ])
-
     site.addRoute(
       "get",
       "/",
-      bridge.requestHandler(
-        page))
+      function(request, response) {
+        var now = timeSlice(
+          new Date())
+        var woke = timeSlice(
+          new Date(
+            "2019-03-11 12:45"))
+        var num = number(
+          now,
+          woke)
+        var percent = Math.ceil(
+          num/64*100)
 
+        var pre = element()
+        var post = element()
+
+        for (var i=0; i<num; i++) {
+          pre.addChild(
+            element(".time-block.time-block__done"))
+        }
+
+        for (var i=num+1; i<64; i++) {
+          post.addChild(
+            element(".time-block.time-block__upcoming"))
+        }
+
+        var spaceship = element(
+          ".lil-page",[
+          element("h1", "Hi!"),
+          element("p", "We are in slice "+now),
+          element("p", element.raw("#"+num+"/64 ("+percent+"%) "), progressBar(percent)),
+          element("p", "There are "+timeLeft(now)+" minutes left"),
+          ])
+
+        bridge.forResponse(
+          response)
+        .send([
+          pre,
+          spaceship,
+          post])})
 
     function progressBar(percent) {
       percent = percent / 5
