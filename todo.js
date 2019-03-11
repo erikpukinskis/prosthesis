@@ -24,7 +24,7 @@ library.using([
 
 
     var site = new WebSite()
-    site.start(4141)
+    site.start(process.env.PORT || 4141)
 
     var bridge = new BrowserBridge()
     basicStyles.addTo(bridge)
