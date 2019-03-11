@@ -11,8 +11,11 @@
     "appeared-a-wild": "*",
     "render-code": "*"
   },
+  "scripts": {
+    "start": "node todo"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/erikpukinskis/.git"
+    "url": "https://github.com/erikpukinskis/prosthesis.git"
   }
 }
