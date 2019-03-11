@@ -101,7 +101,7 @@ library.using([
           new Date())
         var woke = timeSlice(
           new Date(
-            "2019-03-11 12:45 UTC"))
+            "2019-03-11 12:45 PST"))
         var num = number(
           now,
           woke)
