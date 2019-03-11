@@ -42,6 +42,26 @@ library.using([
         "background": "orange"}),
 
       element.style(
+        ".time-block__now",{
+        "width": "50px",
+        "height": "50px",
+        "font-size": "1.7em",
+        "animation-name": "flash",
+        "animation-delay": "0",
+        "animation-iteration-count": "infinite",
+        "animation-direction": "forward",
+        "background": "lightgreen",
+      }),
+
+      element.style(
+        "@keyframes flash",{
+        "from": {
+          "opacity": "0.1"},
+        "to": {
+          "opacity": "1.0"},
+        }),
+
+      element.style(
         ".time-block__upcoming", {
         "background": "gray"}),
 
@@ -56,6 +76,12 @@ library.using([
           function() {
             console.log("tick")},
           1000)})
+
+    var head = element(".lil-page",[
+      element("h1", "Inner Limits"),
+      element("p", "Skyline Friendly Organizations"),
+      element("p", "Wholesome Encounters")
+      ])
 
     site.addRoute(
       "get",
@@ -85,17 +111,28 @@ library.using([
             element(".time-block.time-block__upcoming"))
         }
 
+        var nowBlock = element(".time-block.time-block__now", element.raw("#"+num))
+
+        var context = element(
+          "span",
+          "/64 ("+percent+"%) ",
+          progressBar(percent))
+
         var spaceship = element(
           ".lil-page",[
           element("h1", "Hi!"),
           element("p", "We are in slice "+now),
-          element("p", element.raw("#"+num+"/64 ("+percent+"%) "), progressBar(percent)),
+          element(
+            "div",
+            nowBlock,
+            context),
           element("p", "There are "+timeLeft(now)+" minutes left"),
           ])
 
         bridge.forResponse(
           response)
         .send([
+          head,
           pre,
           spaceship,
           post])})
