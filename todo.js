@@ -41,11 +41,11 @@ library.using([
           1000)})
 
     var num = number(now, woke)
-    var percent = Math.ceil(num/64*100)+"%"
+    var percent = Math.ceil(num/64*100)
     var page = element(".lil-page",[
       element("h1", "Hi!"),
       element("p", "We are in slice "+now),
-      element("p", element.raw("#"+num+"/64 ("+percent+")")),
+      element("p", element.raw("#"+num+"/64 ("+percent+"%) "), progressBar(percent)),
       element("p", "There are "+timeLeft(now)+" minutes left")
       ])
 
@@ -54,6 +54,42 @@ library.using([
       "/",
       bridge.requestHandler(
         page))
+
+
+    function progressBar(percent) {
+      percent = percent / 5
+      var bar = ""
+      var space = ""
+      for(var i=0; i<20; i++) {
+        if (i < percent) {
+          bar += "x"
+        } else {
+          space += "-"
+        }
+      }
+
+      var progress = element(
+        "span",
+        element.style({
+          "white-space": "nowrap",
+          "display": "inline-block",
+          "font-family": "monospace",
+          "font-size": "8px",
+          "background": "gray",
+          "color": "transparent",
+          "vertical-align": "middle"}),
+        element(
+          "span",
+          element.style({
+            "background": "lightgreen"}),
+          bar),
+        element(
+          "span",
+          space))
+
+      return progress}
+
+    // Time functions
 
     function timeSlice(time) {
       var date = time.getFullYear()+"-"+(time.getMonth()+1)+"-"+time.getDate()
