@@ -27,7 +27,7 @@ library.using([
     site.start(process.env.PORT || 4141)
 
     console.log("TZ is", process.env.TZ)
-    
+
     var bridge = new BrowserBridge()
     basicStyles.addTo(bridge)
 
@@ -101,7 +101,7 @@ library.using([
           new Date())
         var woke = timeSlice(
           new Date(
-            "2019-03-11 12:45"))
+            "2019-03-11 12:45 UTC"))
         var num = number(
           now,
           woke)
@@ -213,7 +213,7 @@ library.using([
     }
 
     function number(slice, since) {
-      var dt = new Date(slice) - new Date(since)
+      var dt = new Date(slice +" UTC") - new Date(since+" UTC")
       return dt / minutes / 15 + 1
     }
   })
